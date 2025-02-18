@@ -1,5 +1,6 @@
+import os
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, simpledialog
 
 # AthenaNote Class
 class AthenaNote(tk.Tk):
@@ -31,32 +32,44 @@ class Menu(tk.Frame):
         
         # GUI
         label = tk.Label(self, text="Menu", bd=4)
-        button1 = tk.Button(self, text="Create Folder", width=12, command=lambda:CreateFolder()) 
-        button2 = tk.Button(self, text="Open Folder", width=12, command=lambda:OpenFolder())
+        button1 = tk.Button(self, text="Create Folder", width=12, command=lambda:CreateFolderButtonFunctionality()) 
+        button2 = tk.Button(self, text="Open Folder", width=12, command=lambda:OpenFolderButtonFunctionality())
         label.grid(row = 0, column = 0) #(pady=10)
         button1.grid(row = 1, column = 0) #(side="top", pady=(0, 10))
         button2.grid(row = 2, column = 0) #(side="top", pady=(10, 0))
 
-        # Functionality
-        def NameValid(name):
+        # Functions
+        def NameCheck(name):
             invalid_chars = ("\\", "/", ":", "*", "?", "\"", "<", ">", "|")
             for char in name:
                 if char in invalid_chars:
-                    messagebox.showinfo("Invalid Char", f"Invalid char {char} in name.")
+                    messagebox.showinfo("Invalid Char", f"Invalid char {char} in {name}.")
                     return False
             return True
-                
-        def CreateFolder():
+        def GetDirectoryPath():
             directory_path = filedialog.askdirectory(title="Select a Directory")
-            new_folder_name = # dialog for folder name
-            if (directory_path != '') and NameValid(directory_path) and NameValid(new_folder_name):
+            return directory_path
+        def GetNewFolderName():
+            new_folder_name = simpledialog.askstring(title="New Folder Name", prompt="Enter the New Folders Name")
+            return new_folder_name
+        def InitializeTextEditor():
+            print()
+        # Button Functionality
+        def CreateFolderButtonFunctionality():
+            directory_path = GetDirectoryPath
+            new_folder_name = GetNewFolderName
+            if (directory_path != '') and NameCheck(new_folder_name):
+                new_folder_path = os.path.join(directory_path, new_folder_name)
+                InitializeTextEditor(new_folder_path)
                 controller.show_frame("TextEditor")
             else:
                 controller.show_frame("Menu")
-                
-        def OpenFolder():
-            directory_path = filedialog.askdirectory(title="Select a Directory")
-            controller.show_frame("TextEditor")
+        def OpenFolderButtonFunctionality():
+            directory_path = GetDirectoryPath()
+            if (directory_path != ""):
+                InitializeTextEditor(directory_path)
+            else:
+                controller.show_frame("menu")
 
 class TextEditor(tk.Frame):
     def __init__(self, parent, controller):
@@ -74,3 +87,5 @@ class TextEditor(tk.Frame):
 if __name__ == "__main__":
     app = AthenaNote()
     app.mainloop()
+# Create popup to get the new folder name in CreateFolder()
+# 
